@@ -10,7 +10,7 @@ const CROSS = 'X';
 const CIRCLE = 'O';
 
 let WIN_REQUIREMENT;
-let GAME_DIMENSION = 13;
+let GAME_DIMENSION;
 
 const setup_game_interface = (game) => {
   const $gameContainer = $("#container");
@@ -24,7 +24,8 @@ const setup_game_interface = (game) => {
     for(let j = 0; j < GAME_DIMENSION; j++){
       setUpCell(j, i, $gameContainer, game)
     }
-  }
+  };
+  $("body").append($(`<div id="turn"></div>`));
 };
 
 const render = (game) => {
@@ -33,20 +34,25 @@ const render = (game) => {
       $(`[x=${j}][y=${i}]`).html(game.gameboard[j][i]!==null?game.gameboard[j][i].shape:null);
     }
   }
+  let turn = game.turn%2 === 0 ? CROSS : CIRCLE;
+  if (game.result||game.turn === 0){
+    $("#turn").html('');
+  } else {
+    $("#turn").html(`${turn}'s turn`);
+  }
 };
 
 const setUpCell = (x, y, gameCongtainer, game) => {
   const cell = $(`<div class='grid-chessman' x='${x}' y='${y}'></div>`);
   cell.on('click',function(){
+    let turn = game.turn%2 === 0 ? CROSS : CIRCLE;
     if(game.result){
       return;
     }
-    if(game.gameboard[x][y] === null && game.turn%2 === 0){
-      game.result = game.placeChessman([x,y],CROSS)?CROSS:undefined;
-    } else if (game.gameboard[x][y] === null && game.turn%2 === 1){
-      game.result = game.placeChessman([x,y],CIRCLE)?CIRCLE:undefined;
+    if(game.gameboard[x][y] === null){
+      game.result = game.placeChessman([x,y],turn)?turn:undefined;
+      game.turn--;
     }
-    game.turn--;
     render(game);
     if (game.result){
       alert(game.result + "  wins!!!");
@@ -76,8 +82,21 @@ const setGameMode = (dimension) => {
   };
 }
 
+const init = () => {
+  $("body").append($('<section> Please enter game dimension (3-15)<br/> winning requirement 3 for 3 dimension <br/> winning requirement 4 for 4 dimension <br/> winning requirement 5 for rest of dimension <br/><input id="dimensionLength" value="3" type="text"><input id="start" value="START" type="button"> </section>'));
+  $("#start").on('click',function(){
+    GAME_DIMENSION = +$("#dimensionLength").val();
+    if(GAME_DIMENSION>=3 && GAME_DIMENSION<=15){
+      $("section").html('').attr('id', 'container')
+      const game = new Game(GAME_DIMENSION);
+      setGameMode(GAME_DIMENSION);
+      setup_game_interface(game);
+    } else {
+      alert("please enter a number between 3 and 15");
+    }
+  });
+}
+
 $( document ).ready(function() {
-    const game = new Game(GAME_DIMENSION);
-    setGameMode(GAME_DIMENSION);
-    setup_game_interface(game);
+  init();
 });

@@ -14,7 +14,6 @@ class Game {
   placeChessman(coordinates, shape){
     this.gameboard[coordinates[0]][coordinates[1]] = new Chessman(shape, coordinates[0], coordinates[1]);
     const result = this.gameboard[coordinates[0]][coordinates[1]].checkWin(this.gameboard)
-    console.log(result);
     this.consoleDisplay();
     return result;
   };
