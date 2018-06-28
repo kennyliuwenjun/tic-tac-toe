@@ -23,11 +23,16 @@ section, #game_msg {
 #start,
 #reset,
 #scoreboard,
-#resetLocalData {
+#resetLocalData,
+#ai_mode {
   width: 126px;
   height: 84px;
   font-size: 61px;
   margin: 30px;
+}
+
+.ai_bg {
+  background-color: purple;
 }
 
 #scoreboard {

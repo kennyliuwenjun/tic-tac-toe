@@ -12,6 +12,7 @@ const CIRCLE = 'O';
 
 let WIN_REQUIREMENT;
 let GAMEBOARD_LENGTH;
+let AI_MODE = false;
 
 
 const setup_game_interface = (game) => {
@@ -101,6 +102,22 @@ const setUpCell = (x, y, gameCongtainer, game) => {
       }
     }
     render(game);
+    if(AI_MODE){
+      if(game.turn === 0 && !game.result){
+        $("body").removeClass('ai_bg');
+        return;
+      }
+      turn = game.turn%2 === 0 ? CROSS : CIRCLE;
+      const aiPlay = ai3x3.aiMove([x,y]);
+      game.result = game.placeChessman(aiPlay,turn)?turn:undefined;
+      game.turn--;
+      if(game.result){
+        const data = localData.getter();
+        data.score[game.result]++;
+        localData.setter(data);
+      }
+      render(game);
+    }
   });
   gameCongtainer.append(cell);
 };
@@ -122,8 +139,9 @@ const setGameMode = (dimension) => {
 }
 
 const init = () => {
-  $("body").append($('<section> Please enter gameboard length (3-15)<br/><input id="dimensionLength" value="3" type="text"><input id="start" value="START" type="button"> </section>'));
+  $("body").append($('<section> Please enter gameboard length (3-15)<br/><input id="dimensionLength" value="3" type="text"><input id="start" value="START" type="button"> <input id="ai_mode" value="AI MODE" type="button"> </section>'));
   $("#start").on('click',function(){
+    AI_MODE = false;
     GAMEBOARD_LENGTH = +$("#dimensionLength").val();
     if(GAMEBOARD_LENGTH>=3 && GAMEBOARD_LENGTH<=15){
       $("section").html('').attr('id', 'container')
@@ -134,6 +152,17 @@ const init = () => {
     } else {
       alert("please enter a number between 3 and 15");
     }
+  });
+  $("#ai_mode").on('click',function(){
+    $("body").addClass('ai_bg');
+    AI_MODE = true;
+    GAMEBOARD_LENGTH = 3;
+    $("section").html('').attr('id', 'container')
+    game = new Game(GAMEBOARD_LENGTH);
+    setGameMode(GAMEBOARD_LENGTH);
+    setup_game_interface(game);
+    render(game);
+
   });
 }
 
