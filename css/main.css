@@ -15,14 +15,21 @@
   text-align: center;
 }
 
-section, #turn {
+section, #game_msg {
   font-size: 30px;
 }
 
 #dimensionLength,
-#start {
+#start,
+#reset,
+#scoreboard,
+#resetLocalData {
   width: 126px;
   height: 84px;
   font-size: 61px;
   margin: 30px;
+}
+
+#scoreboard {
+  font-size: 29px;
 }
