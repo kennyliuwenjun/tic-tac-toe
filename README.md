@@ -11,3 +11,4 @@ Feature:
 
 - Flexible game mode (3x3, 4x4, 5x5...)
 - Stores result locally
+- AI for 3x3
