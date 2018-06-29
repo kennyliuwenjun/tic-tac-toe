@@ -68,6 +68,7 @@ const render = (game) => {
 
   let turn = game.turn%2 === 0 ? CROSS : CIRCLE;
   if (game.result||game.turn === 0){
+    $("body").removeClass('ai_bg');
     const resultMsg = game.result?`${game.result} won!`:`draw !`;
     $("#game_msg").html(resultMsg);
     $("body").append($(`<input type="button" value="reset game" id="reset"></div>`));
@@ -100,11 +101,12 @@ const setUpCell = (x, y, gameCongtainer, game) => {
         data.score[game.result]++;
         localData.setter(data);
       }
+    } else {
+      return;
     }
     render(game);
     if(AI_MODE){
-      if(game.turn === 0 && !game.result){
-        $("body").removeClass('ai_bg');
+      if(!game.turn || game.result){
         return;
       }
       turn = game.turn%2 === 0 ? CROSS : CIRCLE;
@@ -156,6 +158,7 @@ const init = () => {
   $("#ai_mode").on('click',function(){
     $("body").addClass('ai_bg');
     AI_MODE = true;
+    ai3x3.nextScenario = undefined;
     GAMEBOARD_LENGTH = 3;
     $("section").html('').attr('id', 'container')
     game = new Game(GAMEBOARD_LENGTH);
